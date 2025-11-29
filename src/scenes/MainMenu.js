@@ -11,28 +11,33 @@ export class MainMenu extends Phaser.Scene {
 
         this.cameras.main.setBackgroundColor('#040218');
 
-        this.add.text(640, 160, 'Cavernas', {
+        this.add.text(640, 140, 'Cavernas', {
             fontSize: '52px',
             color: '#ffffff'
         }).setOrigin(0.5);
 
-        this.add.text(640, 240, 'Kenney art, HammerFest mechanics', {
-            fontSize: '20px',
+        this.add.text(640, 210, 'Kenney art, HammerFest mechanics', {
+            fontSize: '22px',
             color: '#bbbbff'
         }).setOrigin(0.5);
 
-        const playText = this.add.text(640, 330, 'Play', {
+        const playText = this.add.text(640, 320, 'Play', {
             fontSize: '32px',
             color: '#ffe28a',
             backgroundColor: '#222'
         }).setOrigin(0.5).setPadding(10, 6, 10, 6).setInteractive({ useHandCursor: true });
 
-        this.add.text(640, 410, 'Move: WASD / Arrows  |  Jump: W / UP  |  Throw: SPACE / J', {
+        this.add.text(640, 390, 'Move: WASD / Arrows  |  Jump: W / UP  |  Throw hammer: SPACE / J', {
             fontSize: '18px',
             color: '#dddddd'
         }).setOrigin(0.5);
 
-        this.add.text(640, 450, 'Descend to the bottom exit to clear each cavern. Avoid enemies or lose lives!', {
+        this.add.text(640, 430, 'Powerups drop from foes & blocks: Triple Shot, Shield, Freeze Zone', {
+            fontSize: '17px',
+            color: '#aee6ff'
+        }).setOrigin(0.5);
+
+        this.add.text(640, 470, 'Descend to the bottom exit to clear each cavern. Hammer everything!', {
             fontSize: '16px',
             color: '#aaaaaa'
         }).setOrigin(0.5);
