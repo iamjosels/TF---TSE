@@ -5,12 +5,7 @@ const PLAYER_CONSTANTS = {
     MOVE_SPEED: 320,
     JUMP_VELOCITY: -560,
     SHOOT_COOLDOWN: 340,
-    MAX_ACTIVE_PROJECTILES: 9,
-    SCALE: ASSETS_CONFIG.player.scale || 0.55,
-    BODY_WIDTH_FACTOR: 0.45,
-    BODY_HEIGHT_FACTOR: 0.88,
-    THROW_OFFSET_X: 20,
-    THROW_OFFSET_Y: 18
+    MAX_ACTIVE_PROJECTILES: 9
 };
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
@@ -19,16 +14,26 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        // Bottom-centered origin and tuned hitbox keep jumps/landings fair and visually aligned.
-        this.setOrigin(ASSETS_CONFIG.player.origin.x, ASSETS_CONFIG.player.origin.y);
-        this.setScale(PLAYER_CONSTANTS.SCALE);
+        const metrics = scene.registry.get('assetMetrics') || {};
+        const playerMetrics = metrics.player || {};
+        const origin = ASSETS_CONFIG.player.origin;
+
+        this.setOrigin(origin.x, origin.y);
+        const scale = playerMetrics.scale || 1;
+        this.setScale(scale);
         this.setCollideWorldBounds(true);
         this.setBounce(0.05);
 
-        const bodyWidth = this.width * PLAYER_CONSTANTS.BODY_WIDTH_FACTOR;
-        const bodyHeight = this.height * PLAYER_CONSTANTS.BODY_HEIGHT_FACTOR;
+        const src = scene.textures.get(this.texture.key).getSourceImage();
+        const bodyWidth = src.width * 0.7;
+        const bodyHeight = src.height * 0.85;
         this.body.setSize(bodyWidth, bodyHeight);
-        this.body.setOffset((this.width - bodyWidth) / 2, this.height - bodyHeight);
+        this.body.setOffset((src.width - bodyWidth) / 2, src.height - bodyHeight);
+
+        const displayW = src.width * scale;
+        const displayH = src.height * scale;
+        this.throwOffsetX = displayW * 0.35;
+        this.throwOffsetY = displayH * 0.45;
 
         this.facing = 1;
         this.lastShot = 0;
@@ -207,8 +212,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     fireProjectileSpread(projectiles) {
-        const spawnX = this.x + this.facing * PLAYER_CONSTANTS.THROW_OFFSET_X;
-        const spawnY = this.y - PLAYER_CONSTANTS.THROW_OFFSET_Y;
+        const spawnX = this.x + this.facing * this.throwOffsetX;
+        const spawnY = this.y - this.throwOffsetY;
         const triple = this.powerups[POWERUP_TYPES.TRIPLE_SHOT].active;
         const angles = triple ? POWERUP_BEHAVIOR[POWERUP_TYPES.TRIPLE_SHOT].angles : [0];
 

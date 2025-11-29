@@ -1,10 +1,7 @@
 import { ASSETS_CONFIG } from '../config/assetsConfig.js';
 
 const ENEMY_CONSTANTS = {
-    SPEED: 90,
-    SCALE: ASSETS_CONFIG.enemies.slime.scale || 0.55,
-    BODY_WIDTH_FACTOR: 0.68,
-    BODY_HEIGHT_FACTOR: 0.68
+    SPEED: 90
 };
 
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
@@ -13,14 +10,19 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
+        const metrics = scene.registry.get('assetMetrics') || {};
+        const enemyMetrics = metrics.enemy || {};
+
         this.setOrigin(0.5, 1);
-        this.setScale(ENEMY_CONSTANTS.SCALE);
+        const scale = enemyMetrics.scale || 1;
+        this.setScale(scale);
         this.setCollideWorldBounds(true);
         this.setBounce(1, 0);
-        const bodyWidth = this.width * ENEMY_CONSTANTS.BODY_WIDTH_FACTOR;
-        const bodyHeight = this.height * ENEMY_CONSTANTS.BODY_HEIGHT_FACTOR;
+        const src = scene.textures.get(this.texture.key).getSourceImage();
+        const bodyWidth = src.width * 0.7;
+        const bodyHeight = src.height * 0.9;
         this.body.setSize(bodyWidth, bodyHeight);
-        this.body.setOffset((this.width - bodyWidth) / 2, this.height - bodyHeight);
+        this.body.setOffset((src.width - bodyWidth) / 2, src.height - bodyHeight);
 
         this.direction = -1;
         this.patrolLeft = patrolRange.left;
@@ -64,7 +66,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.freezeTimer.remove(false);
             this.freezeTimer = null;
         }
-        this.disableBody(true, true);
+        this.setVelocity(0, 0);
+        this.play('slime-dead');
+        this.scene.time.delayedCall(120, () => this.disableBody(true, true));
     }
 
     freeze(duration = 7000) {

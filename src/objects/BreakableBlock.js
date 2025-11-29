@@ -5,12 +5,20 @@ export class BreakableBlock extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, ASSETS_CONFIG.breakableBlock.key);
         scene.add.existing(this);
         scene.physics.add.existing(this, true);
-        this.setOrigin(0.5, 1);
-        this.setScale(ASSETS_CONFIG.breakableBlock.scale || 1);
-        const bodyWidth = this.width * 0.92;
-        const bodyHeight = this.height * 0.92;
-        this.body.setSize(bodyWidth, bodyHeight);
-        this.body.setOffset((this.width - bodyWidth) / 2, this.height - bodyHeight);
+        const metrics = scene.registry.get('assetMetrics') || {};
+        const blockMetrics = metrics.block || {};
+        this.setOrigin(0.5, 1.4);
+        this.setScale(blockMetrics.scale || 1);
+        const src = scene.textures.get(this.texture.key).getSourceImage();
+        const scale = blockMetrics.scale || 1;
+        const displayW = src.width * scale;
+        const displayH = src.height * scale;
+        this.body.setSize(displayW, displayH);
+        this.body.setOffset(0, 0);
+        this.body.immovable = true;
+        if (this.body.updateFromGameObject) {
+            this.body.updateFromGameObject();
+        }
     }
 
     shatter() {

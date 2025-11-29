@@ -14,15 +14,19 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, ASSETS_CONFIG.projectile.key);
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        const metrics = scene.registry.get('assetMetrics') || {};
+        const projMetrics = metrics.projectile || {};
         this.setOrigin(0.5, 0.5);
-        this.setScale(ASSETS_CONFIG.projectile.scale || 1);
+        const scale = projMetrics.scale || 1;
+        this.setScale(scale);
         this.setActive(false);
         this.setVisible(false);
         this.body.setAllowGravity(true);
-        const w = this.width * 0.6;
-        const h = this.height * 0.6;
+        const src = scene.textures.get(this.texture.key).getSourceImage();
+        const w = src.width * 0.8;
+        const h = src.height * 0.8;
         this.body.setSize(w, h);
-        this.body.setOffset((this.width - w) / 2, (this.height - h) / 2);
+        this.body.setOffset((src.width - w) / 2, (src.height - h) / 2);
 
         this.bounceCount = 0;
         this.hitCount = 0;

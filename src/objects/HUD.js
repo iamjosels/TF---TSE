@@ -11,6 +11,7 @@ export class HUD {
     constructor(scene, title) {
         this.scene = scene;
         this.powerupIcons = new Map();
+        const metrics = scene.registry.get('assetMetrics') || {};
 
         this.scoreText = scene.add.text(18, 14, 'Score: 0', TEXT_STYLE).setScrollFactor(0).setDepth(1000);
         this.livesText = scene.add.text(18, 42, 'Lives: 3', TEXT_STYLE).setScrollFactor(0).setDepth(1000);
@@ -26,6 +27,7 @@ export class HUD {
 
         this.popupLayer = scene.add.container(0, 0).setDepth(1100).setScrollFactor(0);
         this.powerupLayer = scene.add.container(scene.scale.width - 220, 10).setScrollFactor(0).setDepth(1050);
+        this.iconScale = metrics.iconScale || 0.7;
     }
 
     setScore(score) {
@@ -69,10 +71,9 @@ export class HUD {
             return;
         }
 
-        const bgKey = ASSETS_CONFIG.hud.smallPanel.key;
-        const bg = this.scene.add.image(0, 0, bgKey).setOrigin(0, 0).setScale(0.7);
-        const icon = this.scene.add.image(8, 8, iconKey).setOrigin(0, 0).setScale(0.75);
-        const timerText = this.scene.add.text(40, 10, this._formatLabel(
+        const bg = this._buildBadge();
+        const icon = this.scene.add.image(8, 8, iconKey).setOrigin(0, 0).setScale(this.iconScale);
+        const timerText = this.scene.add.text(icon.displayWidth + 14, 10, this._formatLabel(
             durationMs > 0 ? this.scene.time.now + durationMs : 0,
             label
         ), {
@@ -129,5 +130,20 @@ export class HUD {
             entry.container.y = 0;
             offsetX += 70;
         });
+    }
+
+    _buildBadge() {
+        const size = { w: 64, h: 40 };
+        const key = `hud-badge-${size.w}x${size.h}`;
+        if (!this.scene.textures.exists(key)) {
+            const g = this.scene.add.graphics();
+            g.fillStyle(0x0f1530, 0.7);
+            g.fillRoundedRect(0, 0, size.w, size.h, 6);
+            g.lineStyle(2, 0xffffff, 0.7);
+            g.strokeRoundedRect(0, 0, size.w, size.h, 6);
+            g.generateTexture(key, size.w, size.h);
+            g.destroy();
+        }
+        return this.scene.add.image(0, 0, key).setOrigin(0, 0);
     }
 }

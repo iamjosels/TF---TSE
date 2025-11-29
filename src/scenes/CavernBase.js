@@ -60,10 +60,19 @@ export class CavernBase extends Phaser.Scene {
     buildPlatforms(layout) {
         const platforms = this.physics.add.staticGroup();
         const key = ASSETS_CONFIG.tiles.key;
+        const metrics = this.registry.get('assetMetrics') || {};
+        const baseScale = metrics.platform?.scale || 1;
+        const src = this.textures.get(key).getSourceImage();
         layout.forEach((entry) => {
-            platforms.create(entry.x, entry.y, key)
-                .setScale(entry.scaleX || ASSETS_CONFIG.tiles.scale || 1, entry.scaleY || 1)
-                .refreshBody();
+            const scaleX = (entry.scaleX || 1) * baseScale;
+            const scaleY = (entry.scaleY || 1) * baseScale;
+            const platform = platforms.create(entry.x, entry.y, key);
+            platform.setOrigin(0.5, 1).setScale(scaleX, scaleY);
+            const displayW = src.width * scaleX;
+            const displayH = src.height * scaleY;
+            platform.body.setSize(displayW, displayH * 0.35);
+            platform.body.setOffset(0, displayH * 0.65);
+            platform.refreshBody();
         });
         return platforms;
     }
@@ -86,8 +95,10 @@ export class CavernBase extends Phaser.Scene {
     }
 
     createExitZone() {
-        const exitY = this.levelSettings.exitY || WORLD.HEIGHT - 20;
-        this.exitZone = this.add.zone(WORLD.WIDTH / 2, exitY, WORLD.WIDTH, 60);
+        const exitHeight = 50;
+        const exitBase = this.levelSettings.exitY || WORLD.HEIGHT;
+        const exitY = exitBase - exitHeight / 2;
+        this.exitZone = this.add.zone(WORLD.WIDTH / 2, exitY, WORLD.WIDTH, exitHeight);
         this.physics.add.existing(this.exitZone, true);
         this.physics.add.overlap(this.player, this.exitZone, this.handleExit, null, this);
 

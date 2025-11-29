@@ -24,6 +24,91 @@ function generateEffectTextures(scene) {
     }
 }
 
+function computeScaleForTarget(texture, targetHeight) {
+    if (!texture || !targetHeight) return 1;
+    const src = texture.getSourceImage();
+    return src.height > 0 ? targetHeight / src.height : 1;
+}
+
+function buildMetrics(scene) {
+    const textures = scene.textures;
+    const targets = ASSETS_CONFIG.targets;
+
+    const playerTex = textures.get(ASSETS_CONFIG.player.idle.key);
+    const playerScale = computeScaleForTarget(playerTex, targets.playerHeight);
+    const playerSrc = playerTex.getSourceImage();
+    const walkSrc = textures.get(ASSETS_CONFIG.player.walk.key).getSourceImage();
+    const walkFrameWidth = walkSrc.width / ASSETS_CONFIG.player.walk.frames;
+    const walkFrameHeight = walkSrc.height;
+
+    const enemyTex = textures.get(ASSETS_CONFIG.enemies.slime.walkFrames[0].key);
+    const enemyScale = computeScaleForTarget(enemyTex, targets.enemyHeight);
+    const enemySrc = enemyTex.getSourceImage();
+
+    const projTex = textures.get(ASSETS_CONFIG.projectile.key);
+    const projScale = computeScaleForTarget(projTex, targets.projectileHeight);
+    const projSrc = projTex.getSourceImage();
+
+    const blockTex = textures.get(ASSETS_CONFIG.breakableBlock.key);
+    const blockScale = computeScaleForTarget(blockTex, targets.breakableHeight);
+    const blockSrc = blockTex.getSourceImage();
+
+    const platformTex = textures.get(ASSETS_CONFIG.tiles.key);
+    const platformScale = computeScaleForTarget(platformTex, targets.platformHeight);
+    const platformSrc = platformTex.getSourceImage();
+
+    const itemTex = textures.get(ASSETS_CONFIG.items[0].key);
+    const itemScale = computeScaleForTarget(itemTex, targets.itemHeight);
+    const itemSrc = itemTex.getSourceImage();
+
+    const iconScale = computeScaleForTarget(itemTex, targets.iconHeight);
+
+    return {
+        player: {
+            scale: playerScale,
+            src: { width: playerSrc.width, height: playerSrc.height },
+            walkFrameWidth,
+            walkFrameHeight
+        },
+        enemy: {
+            scale: enemyScale,
+            src: { width: enemySrc.width, height: enemySrc.height }
+        },
+        projectile: {
+            scale: projScale,
+            src: { width: projSrc.width, height: projSrc.height }
+        },
+        block: {
+            scale: blockScale,
+            src: { width: blockSrc.width, height: blockSrc.height }
+        },
+        platform: {
+            scale: platformScale,
+            src: { width: platformSrc.width, height: platformSrc.height }
+        },
+        item: {
+            scale: itemScale,
+            src: { width: itemSrc.width, height: itemSrc.height }
+        },
+        iconScale
+    };
+}
+
+function registerWalkSpritesheet(scene) {
+    const textures = scene.textures;
+    const walkCfg = ASSETS_CONFIG.player.walk;
+    const baseTex = textures.get(walkCfg.key);
+    if (!baseTex) return { sheetKey: walkCfg.key, frameWidth: 0, frameHeight: 0 };
+    const src = baseTex.getSourceImage();
+    const frameWidth = src.width / walkCfg.frames;
+    const frameHeight = src.height;
+    const sheetKey = `${walkCfg.key}-sheet`;
+    if (!textures.exists(sheetKey)) {
+        textures.addSpriteSheet(sheetKey, src, { frameWidth, frameHeight, endFrame: walkCfg.frames - 1 });
+    }
+    return { sheetKey, frameWidth, frameHeight };
+}
+
 export class Preload extends Phaser.Scene {
     constructor() {
         super({ key: 'Preload' });
@@ -42,7 +127,7 @@ export class Preload extends Phaser.Scene {
         this.load.image(player.idle.key, player.idle.path);
         this.load.image(player.jump.key, player.jump.path);
         this.load.image(player.hurt.key, player.hurt.path);
-        this.load.atlas(player.run.key, player.run.texturePath, player.run.atlasPath);
+        this.load.image(player.walk.key, player.walk.path);
 
         Object.values(ASSETS_CONFIG.enemies).forEach((enemy) => {
             enemy.walkFrames.forEach((frame) => this.load.image(frame.key, frame.path));
@@ -59,17 +144,15 @@ export class Preload extends Phaser.Scene {
                 this.load.image(powerup.iconKey, powerup.iconPath || powerup.path);
             }
         });
-
-        Object.values(ASSETS_CONFIG.hud).forEach((entry) => {
-            if (entry.path) {
-                this.load.image(entry.key, entry.path);
-            }
-        });
     }
 
     create() {
         generateEffectTextures(this);
-        createAnimations(this);
+        const walkInfo = registerWalkSpritesheet(this);
+        const metrics = buildMetrics(this);
+        const assetMetrics = { ...metrics, walkSheet: walkInfo.sheetKey, walkFrameWidth: walkInfo.frameWidth, walkFrameHeight: walkInfo.frameHeight };
+        this.registry.set('assetMetrics', assetMetrics);
+        createAnimations(this, assetMetrics);
         this.scene.start('MainMenu');
     }
 }
