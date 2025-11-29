@@ -8,12 +8,12 @@ import { Win } from './scenes/Win.js';
 
 const config = {
     type: Phaser.AUTO,
-    title: 'Overlord Rising',
+    title: 'Cavernas (HammerFest Tribute)',
     parent: 'game-container',
     width: 1280,
     height: 720,
     backgroundColor: '#000000',
-    pixelArt: false,
+    pixelArt: true,
     scene: [Boot, Preload, MainMenu, Level1, Level2, Level3, Win],
     scale: {
         mode: Phaser.Scale.FIT,

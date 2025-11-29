@@ -2,9 +2,9 @@ import { ASSETS_CONFIG } from '../config/assetsConfig.js';
 
 const PROJECTILE_CONSTANTS = {
     SPEED: 540,
-    LIFETIME: 3200,
-    ARC_Y: -240,
-    BOUNCE: 0.82,
+    LIFETIME: 3400,
+    ARC_Y: -260,
+    BOUNCE: ASSETS_CONFIG.projectile.bounce || 0.82,
     MAX_BOUNCES: 4,
     MAX_HITS: 3
 };
@@ -19,9 +19,8 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.setVisible(false);
         this.body.setAllowGravity(true);
-        // Slightly smaller hitbox to match the sprite size.
-        const w = this.width * 0.65;
-        const h = this.height * 0.65;
+        const w = this.width * 0.6;
+        const h = this.height * 0.6;
         this.body.setSize(w, h);
         this.body.setOffset((this.width - w) / 2, (this.height - h) / 2);
 
@@ -29,7 +28,6 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.hitCount = 0;
         this.isMarkedDestroy = false;
 
-        // Global world-bounds listener to track ricochets.
         this.onWorldBoundsHandler = (body) => {
             if (body.gameObject === this) {
                 this.countBounce();
@@ -38,8 +36,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.scene.physics.world.on('worldbounds', this.onWorldBoundsHandler);
     }
 
-    fire(x, y, direction) {
-        // HammerFest-like toss: slight upward arc, bouncy, limited ricochets.
+    fire(x, y, direction, angle = 0) {
         this.body.reset(x, y);
         this.setActive(true);
         this.setVisible(true);
@@ -48,10 +45,17 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.body.onWorldBounds = true;
         this.setBounce(PROJECTILE_CONSTANTS.BOUNCE);
         this.body.setAllowGravity(true);
+        this.body.setDrag(0, 0);
         this.bounceCount = 0;
         this.hitCount = 0;
         this.isMarkedDestroy = false;
-        this.setVelocity(direction * PROJECTILE_CONSTANTS.SPEED, PROJECTILE_CONSTANTS.ARC_Y);
+
+        const baseVector = new Phaser.Math.Vector2(
+            PROJECTILE_CONSTANTS.SPEED * direction,
+            PROJECTILE_CONSTANTS.ARC_Y
+        );
+        const rotated = baseVector.rotate(Phaser.Math.DegToRad(angle * direction));
+        this.setVelocity(rotated.x, rotated.y);
 
         this.scene.time.delayedCall(PROJECTILE_CONSTANTS.LIFETIME, () => {
             if (this.active) {

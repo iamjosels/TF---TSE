@@ -1,10 +1,10 @@
 import { ASSETS_CONFIG } from '../config/assetsConfig.js';
 
 const ENEMY_CONSTANTS = {
-    SPEED: 80,
-    SCALE: ASSETS_CONFIG.enemies.slime.scale || 1,
-    BODY_WIDTH_FACTOR: 0.8,
-    BODY_HEIGHT_FACTOR: 0.7
+    SPEED: 90,
+    SCALE: ASSETS_CONFIG.enemies.slime.scale || 0.55,
+    BODY_WIDTH_FACTOR: 0.68,
+    BODY_HEIGHT_FACTOR: 0.68
 };
 
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
@@ -26,12 +26,18 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.patrolLeft = patrolRange.left;
         this.patrolRight = patrolRange.right;
         this.speed = speed;
+        this.frozen = false;
+        this.freezeTimer = null;
 
         this.play('slime-walk');
     }
 
     update() {
-        if (!this.body) return;
+        if (!this.body || !this.active) return;
+        if (this.frozen) {
+            this.setVelocityX(0);
+            return;
+        }
 
         if (this.body.blocked.right || this.x >= this.patrolRight) {
             this.direction = -1;
@@ -48,12 +54,45 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     turnAround() {
+        if (this.frozen) return;
         this.direction *= -1;
         this.setVelocityX(this.direction * this.speed);
     }
 
     takeHit() {
+        if (this.freezeTimer) {
+            this.freezeTimer.remove(false);
+            this.freezeTimer = null;
+        }
         this.disableBody(true, true);
+    }
+
+    freeze(duration = 7000) {
+        if (!this.active) return;
+        if (this.freezeTimer) {
+            this.freezeTimer.remove(false);
+            this.freezeTimer = null;
+        }
+        this.frozen = true;
+        this.setVelocity(0, 0);
+        this.body.moves = false;
+        this.setTint(0xa8e7ff);
+        if (this.anims.currentAnim) {
+            this.anims.pause();
+        }
+
+        this.freezeTimer = this.scene.time.delayedCall(duration, () => this.unfreeze());
+    }
+
+    unfreeze() {
+        if (!this.active) return;
+        this.frozen = false;
+        this.body.moves = true;
+        this.clearTint();
+        if (this.anims.currentAnim) {
+            this.anims.resume();
+        }
+        this.freezeTimer = null;
     }
 
     isAlive() {
