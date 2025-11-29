@@ -1,19 +1,20 @@
 export const ASSETS_CONFIG = {
-    background: { key: 'bg-cave', path: 'assets/Base pack/bg_castle.png' },
+    background: { key: 'bg-cave', path: 'assets/New Assets/bg.png' },
     tiles: {
         key: 'tiles-castle',
-        path: 'assets/Base pack/Tiles/castleHalfMid.png',
+        path: 'assets/New Assets/platform.png',
         scale: 1
     },
     player: {
         scale: 0.55,
         origin: { x: 0.5, y: 1 },
-        idle: { key: 'player-idle', path: 'assets/Base pack/Player/p1_stand.png' },
-        jump: { key: 'player-jump', path: 'assets/Base pack/Player/p1_jump.png' },
-        hurt: { key: 'player-hurt', path: 'assets/Base pack/Player/p1_hurt.png' },
+        idle: { key: 'player-idle', path: 'assets/New Assets/p_stand.png' },
+        jump: { key: 'player-jump', path: 'assets/New Assets/p_jump.png' },
+        hurt: { key: 'player-hurt', path: 'assets/New Assets/p_hurt.png' },
         run: {
             key: 'player-run',
-            texturePath: 'assets/Base pack/Player/p1_walk/p1_walk.png',
+            texturePath: 'assets/New Assets/p_walkcycle.png',
+            // aca seria cmabiar el json!
             atlasPath: 'assets/Base pack/Player/p1_walk/p1_walk.json'
         }
     },
@@ -21,32 +22,32 @@ export const ASSETS_CONFIG = {
         slime: {
             scale: 0.55,
             walkFrames: [
-                { key: 'slime-walk-1', path: 'assets/Base pack/Enemies/slimeWalk1.png' },
-                { key: 'slime-walk-2', path: 'assets/Base pack/Enemies/slimeWalk2.png' }
+                { key: 'slime-walk-1', path: 'assets/New Assets/g_walk1.png' },
+                { key: 'slime-walk-2', path: 'assets/New Assets/g_walk2.png' }
             ],
-            dead: { key: 'slime-dead', path: 'assets/Base pack/Enemies/slimeDead.png' }
+            dead: { key: 'slime-dead', path: 'assets/New Assets/g_dead.png' }
         }
     },
     breakableBlock: {
         key: 'breakable-block',
-        path: 'assets/Base pack/Tiles/box.png',
+        path: 'assets/New Assets/breakable.png',
         scale: 0.65
     },
     projectile: {
         key: 'projectile-hammer',
-        path: 'assets/Base pack/Items/star.png',
+        path: 'assets/New Assets/projectile.png',
         scale: 0.45,
         bounce: 0.82
     },
     items: [
-        { key: 'coin', path: 'assets/Base pack/Items/coinGold.png', score: 25 },
-        { key: 'gem-blue', path: 'assets/Base pack/Items/gemBlue.png', score: 75 },
-        { key: 'gem-red', path: 'assets/Base pack/Items/gemRed.png', score: 125 }
+        { key: 'coin', path: 'assets/New Assets/coin.png', score: 25 },
+        { key: 'gem-blue', path: 'assets/New Assets/gemheart.png', score: 75 },
+        { key: 'gem-red', path: 'assets/New Assets/gemheart.png', score: 125 }
     ],
     powerups: {
         tripleShot: {
             key: 'powerup-triple',
-            path: 'assets/Base pack/Items/star.png',
+            path: 'assets/New Assets/projectile.png',
             iconKey: 'icon-triple',
             duration: 10000,
             popup: 'TRIPLE SHOT!'
