@@ -41,11 +41,10 @@ function buildMetrics(scene) {
     const walkFrameWidth = walkSrc.width / ASSETS_CONFIG.player.walk.frames;
     const walkFrameHeight = walkSrc.height;
 
-    const enemyKey = ASSETS_CONFIG.enemies.goblin.spritesheet.key;
+    const enemyKey = ASSETS_CONFIG.enemies.slime.idle.key;
     const enemyTex = textures.get(enemyKey);
     const enemyScale = computeScaleForTarget(enemyTex, targets.enemyHeight);
-    const enemyFrame = enemyTex.frames[Object.keys(enemyTex.frames)[1]];
-    const enemySrc = enemyFrame ? { width: enemyFrame.width, height: enemyFrame.height } : { width: 64, height: 64 };
+    const enemySrc = enemyTex.getSourceImage();
 
     const projTex = textures.get(ASSETS_CONFIG.projectile.key);
     const projScale = computeScaleForTarget(projTex, targets.projectileHeight);
@@ -132,18 +131,10 @@ export class Preload extends Phaser.Scene {
         this.load.image(player.walk.key, player.walk.path);
 
         Object.values(ASSETS_CONFIG.enemies).forEach((enemy) => {
-            if (enemy.spritesheet) {
-                this.load.atlas(enemy.spritesheet.key, enemy.spritesheet.path, enemy.spritesheet.jsonPath);
-            }
-            if (enemy.idle) {
-                this.load.atlas(enemy.idle.key, enemy.idle.path, enemy.idle.jsonPath);
-            }
-            if (enemy.dead) {
-                this.load.atlas(enemy.dead.key, enemy.dead.path, enemy.dead.jsonPath);
-            }
-            if (enemy.hit) {
-                this.load.atlas(enemy.hit.key, enemy.hit.path, enemy.hit.jsonPath);
-            }
+            if (enemy.idle) this.load.image(enemy.idle.key, enemy.idle.path);
+            if (enemy.walk) this.load.image(enemy.walk.key, enemy.walk.path);
+            if (enemy.dead) this.load.image(enemy.dead.key, enemy.dead.path);
+            if (enemy.hit) this.load.image(enemy.hit.key, enemy.hit.path);
         });
 
         this.load.image(ASSETS_CONFIG.breakableBlock.key, ASSETS_CONFIG.breakableBlock.path);

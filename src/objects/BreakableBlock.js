@@ -7,7 +7,7 @@ export class BreakableBlock extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this, true);
         const metrics = scene.registry.get('assetMetrics') || {};
         const blockMetrics = metrics.block || {};
-        this.setOrigin(0.5, 1.4);
+        this.setOrigin(0.5, 1.5);
         this.setScale(blockMetrics.scale || 1);
         const src = scene.textures.get(this.texture.key).getSourceImage();
         const scale = blockMetrics.scale || 1;

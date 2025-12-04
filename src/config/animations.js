@@ -47,40 +47,31 @@ export function createAnimations(scene, metrics = {}) {
         });
     }
 
-    const goblin = ASSETS_CONFIG.enemies.goblin;
+    const slime = ASSETS_CONFIG.enemies.slime;
     
-    if (scene.textures.exists(goblin.spritesheet.key)) {
-        ensureAnim('goblin-walk', {
-            key: 'goblin-walk',
-            frames: anims.generateFrameNames(goblin.spritesheet.key),
-            frameRate: 8,
-            repeat: -1
-        });
-    }
-
-    if (scene.textures.exists(goblin.idle.key)) {
-        ensureAnim('goblin-idle', {
-            key: 'goblin-idle',
-            frames: anims.generateFrameNames(goblin.idle.key),
+    if (scene.textures.exists(slime.walk.key)) {
+        ensureAnim('slime-walk', {
+            key: 'slime-walk',
+            frames: [{ key: slime.walk.key }],
             frameRate: 6,
             repeat: -1
         });
     }
 
-    if (scene.textures.exists(goblin.dead.key)) {
-        ensureAnim('goblin-dead', {
-            key: 'goblin-dead',
-            frames: anims.generateFrameNames(goblin.dead.key),
-            frameRate: 10,
-            repeat: 0
+    if (scene.textures.exists(slime.idle.key)) {
+        ensureAnim('slime-idle', {
+            key: 'slime-idle',
+            frames: [{ key: slime.idle.key }],
+            frameRate: 1,
+            repeat: -1
         });
     }
 
-    if (scene.textures.exists(goblin.hit.key)) {
-        ensureAnim('goblin-hit', {
-            key: 'goblin-hit',
-            frames: anims.generateFrameNames(goblin.hit.key),
-            frameRate: 12,
+    if (scene.textures.exists(slime.dead.key)) {
+        ensureAnim('slime-dead', {
+            key: 'slime-dead',
+            frames: [{ key: slime.dead.key }],
+            frameRate: 1,
             repeat: 0
         });
     }
