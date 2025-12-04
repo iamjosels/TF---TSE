@@ -224,4 +224,26 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             }
         });
     }
+
+    takeDamage() {
+        // Flash red effect
+        this.setTint(0xff0000);
+        this.scene.time.delayedCall(100, () => {
+            this.clearTint();
+            this.setTint(0xff0000);
+        });
+        this.scene.time.delayedCall(200, () => {
+            this.clearTint();
+        });
+        
+        // Play hurt animation briefly
+        if (this.scene.textures.exists(ASSETS_CONFIG.player.hurt.key)) {
+            this.setTexture(ASSETS_CONFIG.player.hurt.key);
+            this.scene.time.delayedCall(300, () => {
+                if (this.active) {
+                    this.setTexture(ASSETS_CONFIG.player.idle.key);
+                }
+            });
+        }
+    }
 }

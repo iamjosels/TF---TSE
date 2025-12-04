@@ -15,6 +15,12 @@ export class HUD {
 
         this.scoreText = scene.add.text(18, 14, 'Score: 0', TEXT_STYLE).setScrollFactor(0).setDepth(1000);
         this.livesText = scene.add.text(18, 42, 'Lives: 3', TEXT_STYLE).setScrollFactor(0).setDepth(1000);
+        this.comboText = scene.add.text(18, 70, '', {
+            fontSize: '18px',
+            color: '#ffaa00',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setScrollFactor(0).setDepth(1000).setVisible(false);
         this.titleText = scene.add.text(scene.scale.width / 2, 28, title || '', {
             fontSize: '26px',
             color: '#ffe28a',
@@ -59,6 +65,46 @@ export class HUD {
             ease: 'Cubic.easeOut',
             onComplete: () => popup.destroy()
         });
+    }
+
+    showFloatingScore(amount, x, y, multiplier = 1) {
+        const color = multiplier > 1 ? '#ffaa00' : '#ffffff';
+        const text = multiplier > 1 ? `+${amount} x${multiplier}` : `+${amount}`;
+        const fontSize = multiplier > 1 ? '24px' : '20px';
+        
+        const floatingText = this.scene.add.text(x, y - 20, text, {
+            fontSize,
+            color,
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+
+        this.popupLayer.add(floatingText);
+        this.scene.tweens.add({
+            targets: floatingText,
+            y: y - 60,
+            alpha: 0,
+            scale: 1.3,
+            duration: 800,
+            ease: 'Back.easeOut',
+            onComplete: () => floatingText.destroy()
+        });
+    }
+
+    updateCombo(count, multiplier) {
+        if (count > 0) {
+            this.comboText.setText(`COMBO x${multiplier}!`);
+            this.comboText.setVisible(true);
+            this.scene.tweens.add({
+                targets: this.comboText,
+                scale: 1.2,
+                duration: 100,
+                yoyo: true,
+                ease: 'Sine.easeInOut'
+            });
+        } else {
+            this.comboText.setVisible(false);
+        }
     }
 
     activatePowerup(type, iconKey, durationMs, label) {

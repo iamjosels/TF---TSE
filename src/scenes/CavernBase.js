@@ -57,6 +57,27 @@ export class CavernBase extends Phaser.Scene {
         bg.setDisplaySize(this.scale.width, this.scale.height);
     }
 
+    createParticles(x, y, color, count = 8) {
+        for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 * i) / count;
+            const speed = 100 + Math.random() * 100;
+            const particle = this.add.rectangle(x, y, 4, 4, color);
+            const vx = Math.cos(angle) * speed;
+            const vy = Math.sin(angle) * speed - 50;
+            
+            this.tweens.add({
+                targets: particle,
+                x: x + vx * 0.5,
+                y: y + vy * 0.5,
+                alpha: 0,
+                scale: 0.5,
+                duration: 500 + Math.random() * 300,
+                ease: 'Cubic.easeOut',
+                onComplete: () => particle.destroy()
+            });
+        }
+    }
+
     buildPlatforms(layout) {
         const platforms = this.physics.add.staticGroup();
         const key = ASSETS_CONFIG.tiles.key;
@@ -89,7 +110,7 @@ export class CavernBase extends Phaser.Scene {
     createEnemies(enemyConfigs) {
         if (!enemyConfigs) return;
         enemyConfigs.forEach((config) => {
-            const enemy = new Enemy(this, config.x, config.y, config.patrol, config.speed);
+            const enemy = new Enemy(this, config.x, config.y, config.patrol, config.speed, config.type || 'slime');
             this.enemies.add(enemy);
         });
     }
@@ -136,9 +157,15 @@ export class CavernBase extends Phaser.Scene {
     handleProjectileHitEnemy = (projectile, enemy) => {
         if (!enemy.active) return;
         enemy.takeHit();
-        this.score = addScore(this, this.levelSettings.enemyScore || 50);
+        const result = addScore(this, this.levelSettings.enemyScore || 50);
+        this.score = result.score;
         this.hud.setScore(this.score);
         this.spawnLoot('enemy', enemy.x, enemy.y - 10);
+        
+        // Particle effect on enemy death
+        this.createParticles(enemy.x, enemy.y - 20, 0x90EE90, 10);
+        this.cameras.main.shake(100, 0.005);
+        
         projectile.registerHit();
     };
 
@@ -146,6 +173,13 @@ export class CavernBase extends Phaser.Scene {
         if (!block.active) return;
         block.shatter();
         this.spawnLoot('block', block.x, block.y - 15);
+        
+        // Show floating text
+        this.hud.showFloatingScore(10, block.x, block.y - 15, 1);
+        
+        // Particle effect on block break
+        this.createParticles(block.x, block.y, 0xD2691E, 12);
+        
         projectile.registerHit();
     };
 
@@ -156,13 +190,28 @@ export class CavernBase extends Phaser.Scene {
                 this.hud.clearPowerup(POWERUP_TYPES.SHIELD);
                 return;
             }
+            
+            // Reset combo on damage
+            const { resetCombo } = require('../config/gameState.js');
+            resetCombo(this);
+            
+            // Visual feedback
+            this.player.takeDamage();
+            this.cameras.main.shake(200, 0.01);
+            
             this.handlePlayerDeath();
         }
     };
 
     handleItemPickup = (player, item) => {
         if (!item.active) return;
-        this.score = addScore(this, item.scoreValue || 0);
+        const result = addScore(this, item.scoreValue || 0);
+        this.score = result.score;
+        
+        // Particle effect on item pickup
+        const color = item.scoreValue > 100 ? 0xFF4444 : 0xFFD700;
+        this.createParticles(item.x, item.y, color, 6);
+        
         item.destroy();
         this.hud.setScore(this.score);
     };

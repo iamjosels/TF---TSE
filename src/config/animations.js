@@ -75,4 +75,50 @@ export function createAnimations(scene, metrics = {}) {
             repeat: 0
         });
     }
+
+    // SlimeBlue animations
+    const slimeBlue = ASSETS_CONFIG.enemies.slimeBlue;
+    if (scene.textures.exists(slimeBlue.walk.key)) {
+        ensureAnim('slimeBlue-walk', {
+            key: 'slimeBlue-walk',
+            frames: [{ key: slimeBlue.walk.key }],
+            frameRate: 5,
+            repeat: -1
+        });
+        ensureAnim('slimeBlue-idle', {
+            key: 'slimeBlue-idle',
+            frames: [{ key: slimeBlue.idle.key }],
+            frameRate: 1,
+            repeat: -1
+        });
+        ensureAnim('slimeBlue-dead', {
+            key: 'slimeBlue-dead',
+            frames: [{ key: slimeBlue.dead.key }],
+            frameRate: 1,
+            repeat: 0
+        });
+    }
+
+    // Spider animations
+    const spider = ASSETS_CONFIG.enemies.spider;
+    if (scene.textures.exists(spider.walk.key)) {
+        ensureAnim('spider-walk', {
+            key: 'spider-walk',
+            frames: [{ key: spider.walk.key }],
+            frameRate: 8,
+            repeat: -1
+        });
+        ensureAnim('spider-idle', {
+            key: 'spider-idle',
+            frames: [{ key: spider.idle.key }],
+            frameRate: 1,
+            repeat: -1
+        });
+        ensureAnim('spider-dead', {
+            key: 'spider-dead',
+            frames: [{ key: spider.dead.key }],
+            frameRate: 1,
+            repeat: 0
+        });
+    }
 }

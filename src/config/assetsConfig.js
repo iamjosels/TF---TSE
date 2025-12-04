@@ -16,7 +16,25 @@ export const ASSETS_CONFIG = {
             idle: { key: 'slime-idle', path: 'assets/Extra animations and enemies/Enemy sprites/slimeGreen.png' },
             walk: { key: 'slime-walk', path: 'assets/Extra animations and enemies/Enemy sprites/slimeGreen_walk.png' },
             dead: { key: 'slime-dead', path: 'assets/Extra animations and enemies/Enemy sprites/slimeGreen_dead.png' },
-            hit: { key: 'slime-hit', path: 'assets/Extra animations and enemies/Enemy sprites/slimeGreen_hit.png' }
+            hit: { key: 'slime-hit', path: 'assets/Extra animations and enemies/Enemy sprites/slimeGreen_hit.png' },
+            speed: 90,
+            height: 38
+        },
+        slimeBlue: {
+            idle: { key: 'slimeBlue-idle', path: 'assets/Extra animations and enemies/Enemy sprites/slimeBlue.png' },
+            walk: { key: 'slimeBlue-walk', path: 'assets/Extra animations and enemies/Enemy sprites/slimeBlue_blue.png' },
+            dead: { key: 'slimeBlue-dead', path: 'assets/Extra animations and enemies/Enemy sprites/slimeBlue_dead.png' },
+            hit: { key: 'slimeBlue-hit', path: 'assets/Extra animations and enemies/Enemy sprites/slimeBlue_hit.png' },
+            speed: 60,
+            height: 40
+        },
+        spider: {
+            idle: { key: 'spider-idle', path: 'assets/Extra animations and enemies/Enemy sprites/spider.png' },
+            walk: { key: 'spider-walk', path: 'assets/Extra animations and enemies/Enemy sprites/spider_walk1.png' },
+            dead: { key: 'spider-dead', path: 'assets/Extra animations and enemies/Enemy sprites/spider_dead.png' },
+            hit: { key: 'spider-hit', path: 'assets/Extra animations and enemies/Enemy sprites/spider_hit.png' },
+            speed: 130,
+            height: 35
         }
     },
     breakableBlock: {

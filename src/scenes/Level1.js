@@ -37,9 +37,9 @@ const LEVEL1_LAYOUT = {
         { x: 960, y: 240 }
     ],
     enemies: [
-        { x: 1040, y: 540, patrol: { left: 880, right: 1180 }, speed: 90 },
-        { x: 240, y: 540, patrol: { left: 120, right: 420 }, speed: 90 },
-        { x: 640, y: 320, patrol: { left: 520, right: 780 }, speed: 110 }
+        { x: 1040, y: 540, patrol: { left: 880, right: 1180 }, type: 'slime', speed: 90 },
+        { x: 240, y: 540, patrol: { left: 120, right: 420 }, type: 'slimeBlue', speed: 60 },
+        { x: 640, y: 320, patrol: { left: 520, right: 780 }, type: 'spider', speed: 130 }
     ]
 };
 

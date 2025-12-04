@@ -5,21 +5,23 @@ const ENEMY_CONSTANTS = {
 };
 
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, patrolRange = { left: x - 120, right: x + 120 }, speed = ENEMY_CONSTANTS.SPEED) {
-        const textureKey = ASSETS_CONFIG.enemies.slime.idle.key;
+    constructor(scene, x, y, patrolRange = { left: x - 120, right: x + 120 }, speed = ENEMY_CONSTANTS.SPEED, type = 'slime') {
+        const enemyConfig = ASSETS_CONFIG.enemies[type] || ASSETS_CONFIG.enemies.slime;
+        const textureKey = enemyConfig.idle.key;
         super(scene, x, y, textureKey);
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
+        this.enemyType = type;
         const metrics = scene.registry.get('assetMetrics') || {};
-        const enemyMetrics = metrics.enemy || {};
+        const targetHeight = enemyConfig.height || 38;
+        const src = scene.textures.get(textureKey).getSourceImage();
+        const scale = src.height > 0 ? targetHeight / src.height : 1;
 
         this.setOrigin(0.5, 1);
-        const scale = enemyMetrics.scale || 1;
         this.setScale(scale);
         this.setCollideWorldBounds(true);
         this.setBounce(1, 0);
-        const src = scene.textures.get(this.texture.key).getSourceImage();
         const bodyWidth = src.width * 0.7;
         const bodyHeight = src.height * 0.9;
         this.body.setSize(bodyWidth, bodyHeight);
@@ -28,11 +30,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.direction = -1;
         this.patrolLeft = patrolRange.left;
         this.patrolRight = patrolRange.right;
-        this.speed = speed;
+        this.speed = speed || enemyConfig.speed || ENEMY_CONSTANTS.SPEED;
         this.frozen = false;
         this.freezeTimer = null;
 
-        this.play('slime-walk');
+        this.play(`${type}-walk`);
     }
 
     update() {
@@ -51,8 +53,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(this.direction * this.speed);
         this.setFlipX(this.direction > 0);
 
-        if (!this.anims.isPlaying || this.anims.currentAnim.key !== 'slime-walk') {
-            this.play('slime-walk', true);
+        const walkAnim = `${this.enemyType}-walk`;
+        if (!this.anims.isPlaying || this.anims.currentAnim.key !== walkAnim) {
+            this.play(walkAnim, true);
         }
     }
 
@@ -68,7 +71,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.freezeTimer = null;
         }
         this.setVelocity(0, 0);
-        this.play('slime-dead');
+        this.play(`${this.enemyType}-dead`);
         this.scene.time.delayedCall(120, () => this.disableBody(true, true));
     }
 
