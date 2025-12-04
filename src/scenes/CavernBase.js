@@ -1,5 +1,5 @@
 import { ASSETS_CONFIG } from '../config/assetsConfig.js';
-import { addScore, ensureState, loseLife } from '../config/gameState.js';
+import { addScore, ensureState, loseLife, resetCombo } from '../config/gameState.js';
 import { LOOT_ODDS, POWERUP_TYPES } from '../config/powerupsConfig.js';
 import { Player } from '../objects/Player.js';
 import { Enemy } from '../objects/Enemy.js';
@@ -100,8 +100,14 @@ export class CavernBase extends Phaser.Scene {
 
     createBreakables(positions) {
         if (!positions) return;
+        const powerupChance = LOOT_ODDS.powerupDrop.block || 0;
         positions.forEach((pos) => {
-            const block = new BreakableBlock(this, pos.x, pos.y);
+            let assignedPowerup = null;
+            if (Math.random() < powerupChance) {
+                const keys = Object.keys(ASSETS_CONFIG.powerups);
+                assignedPowerup = Phaser.Utils.Array.GetRandom(keys);
+            }
+            const block = new BreakableBlock(this, pos.x, pos.y, assignedPowerup);
             this.breakables.add(block);
             block.refreshBody();
         });
@@ -172,7 +178,8 @@ export class CavernBase extends Phaser.Scene {
     handleProjectileHitBlock = (projectile, block) => {
         if (!block.active) return;
         block.shatter();
-        this.spawnLoot('block', block.x, block.y - 15);
+        this.playPowerupBlockEffect(block.powerupType, block.x, block.y);
+        this.spawnLoot('block', block.x, block.y - 15, block.powerupType);
         
         // Show floating text
         this.hud.showFloatingScore(10, block.x, block.y - 15, 1);
@@ -183,16 +190,19 @@ export class CavernBase extends Phaser.Scene {
         projectile.registerHit();
     };
 
-    handlePlayerEnemyCollision = () => {
+    handlePlayerEnemyCollision = (player, enemy) => {
         if (!this.respawning && this.player.active) {
-            const shielded = this.player.consumeShield();
+            const shielded = this.player.consumeShield(enemy);
             if (shielded) {
                 this.hud.clearPowerup(POWERUP_TYPES.SHIELD);
+                this.cameras.main.shake(120, 0.006);
+                if (enemy && enemy.active) {
+                    enemy.turnAround();
+                }
                 return;
             }
             
             // Reset combo on damage
-            const { resetCombo } = require('../config/gameState.js');
             resetCombo(this);
             
             // Visual feedback
@@ -255,16 +265,21 @@ export class CavernBase extends Phaser.Scene {
         this.items.add(item);
     }
 
-    spawnPowerup(x, y) {
+    spawnPowerup(x, y, forcedType = null) {
         const keys = Object.keys(ASSETS_CONFIG.powerups);
-        const typeKey = Phaser.Utils.Array.GetRandom(keys);
+        const typeKey = forcedType || Phaser.Utils.Array.GetRandom(keys);
         const powerup = new PowerupPickup(this, x, y, typeKey);
         this.powerups.add(powerup);
     }
 
-    spawnLoot(origin, x, y) {
+    spawnLoot(origin, x, y, forcedPowerupType = null) {
         const powerupChance = LOOT_ODDS.powerupDrop[origin === 'enemy' ? 'enemy' : 'block'] || 0;
         const itemChance = LOOT_ODDS.itemDrop[origin === 'enemy' ? 'enemy' : 'block'] || 0.5;
+
+        if (forcedPowerupType) {
+            this.spawnPowerup(x, y, forcedPowerupType);
+            return;
+        }
 
         if (Math.random() < powerupChance) {
             this.spawnPowerup(x, y);
@@ -297,6 +312,32 @@ export class CavernBase extends Phaser.Scene {
                 enemy.freeze(duration);
             }
         });
+    }
+
+    playPowerupBlockEffect(type, x, y) {
+        if (!type) return;
+        if (type === POWERUP_TYPES.FREEZE_ZONE) {
+            this.spawnFreezeRing(x, y, 120);
+            this.createParticles(x, y - 10, 0x9cdcff, 10);
+            return;
+        }
+        if (type === POWERUP_TYPES.SHIELD) {
+            const aura = this.add.sprite(x, y - 10, ASSETS_CONFIG.effects.shieldAura.key).setDepth(20).setAlpha(0.9);
+            const target = aura.height ? (70 / aura.height) : 1.1;
+            aura.setScale(target);
+            this.tweens.add({
+                targets: aura,
+                alpha: 0,
+                scale: target * 1.4,
+                duration: 320,
+                onComplete: () => aura.destroy()
+            });
+            this.createParticles(x, y - 8, 0xf2d27c, 8);
+            return;
+        }
+        if (type === POWERUP_TYPES.TRIPLE_SHOT) {
+            this.createParticles(x, y - 10, 0xffd93b, 12);
+        }
     }
 
     playPowerupSound(type) {

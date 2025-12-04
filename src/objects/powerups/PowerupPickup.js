@@ -20,10 +20,12 @@ export class PowerupPickup extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
 
         const src = scene.textures.get(this.texture.key).getSourceImage();
-        const bodyWidth = src.width * 0.6;
-        const bodyHeight = src.height * 0.6;
+        const displayW = itemMetrics.displayWidth || src.width * scale;
+        const displayH = itemMetrics.displayHeight || src.height * scale;
+        const bodyWidth = displayW * 0.64;
+        const bodyHeight = displayH * 0.64;
         this.body.setSize(bodyWidth, bodyHeight);
-        this.body.setOffset((src.width - bodyWidth) / 2, src.height - bodyHeight);
+        this.body.setOffset((displayW - bodyWidth) / 2, displayH - bodyHeight);
     }
 
     apply(player) {

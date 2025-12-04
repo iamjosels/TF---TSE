@@ -60,14 +60,14 @@ export const ASSETS_CONFIG = {
         },
         shield: {
             key: 'powerup-shield',
-            path: 'assets/Base pack/Items/gemBlue.png',
+            path: 'assets/Request pack/Tiles/shieldGold.png',
             iconKey: 'icon-shield',
             duration: 0,
             popup: 'SHIELD!'
         },
         freezeZone: {
             key: 'powerup-freeze',
-            path: 'assets/Base pack/Items/gemYellow.png',
+            path: 'assets/Ice expansion/Tiles/snowBall.png',
             iconKey: 'icon-freeze',
             duration: 7000,
             popup: 'FREEZE ZONE!'

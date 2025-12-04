@@ -14,9 +14,11 @@ export class Item extends Phaser.Physics.Arcade.Sprite {
         this.setBounce(0.25);
         this.setCollideWorldBounds(true);
         const src = scene.textures.get(this.texture.key).getSourceImage();
-        const bodyWidth = src.width * 0.6;
-        const bodyHeight = src.height * 0.6;
+        const displayW = itemMetrics.displayWidth || src.width * scale;
+        const displayH = itemMetrics.displayHeight || src.height * scale;
+        const bodyWidth = displayW * 0.62;
+        const bodyHeight = displayH * 0.62;
         this.body.setSize(bodyWidth, bodyHeight);
-        this.body.setOffset((src.width - bodyWidth) / 2, src.height - bodyHeight);
+        this.body.setOffset((displayW - bodyWidth) / 2, displayH - bodyHeight);
     }
 }

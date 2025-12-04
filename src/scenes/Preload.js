@@ -25,72 +25,67 @@ function generateEffectTextures(scene) {
 }
 
 function computeScaleForTarget(texture, targetHeight) {
-    if (!texture || !targetHeight) return 1;
+    if (!texture || typeof texture.getSourceImage !== 'function' || !targetHeight) return 1;
     const src = texture.getSourceImage();
     return src.height > 0 ? targetHeight / src.height : 1;
 }
 
+function buildSpriteMetrics(scene, key, targetHeight, frames = 1) {
+    const texture = scene.textures.get(key);
+    const src = texture?.getSourceImage?.();
+    const srcWidth = src?.width || 0;
+    const srcHeight = src?.height || 0;
+    const scale = computeScaleForTarget(texture, targetHeight);
+    const frameWidth = frames > 1 && srcWidth ? srcWidth / frames : srcWidth;
+    const frameHeight = srcHeight;
+    return {
+        scale,
+        src: { width: srcWidth, height: srcHeight },
+        displayWidth: srcWidth * scale,
+        displayHeight: srcHeight * scale,
+        frameWidth,
+        frameHeight,
+        frameDisplayWidth: frameWidth * scale,
+        frameDisplayHeight: frameHeight * scale
+    };
+}
+
 function buildMetrics(scene) {
-    const textures = scene.textures;
     const targets = ASSETS_CONFIG.targets;
 
-    const playerTex = textures.get(ASSETS_CONFIG.player.idle.key);
-    const playerScale = computeScaleForTarget(playerTex, targets.playerHeight);
-    const playerSrc = playerTex.getSourceImage();
-    const walkSrc = textures.get(ASSETS_CONFIG.player.walk.key).getSourceImage();
-    const walkFrameWidth = walkSrc.width / ASSETS_CONFIG.player.walk.frames;
-    const walkFrameHeight = walkSrc.height;
+    const playerMetrics = buildSpriteMetrics(scene, ASSETS_CONFIG.player.idle.key, targets.playerHeight);
+    const walkMetrics = buildSpriteMetrics(
+        scene,
+        ASSETS_CONFIG.player.walk.key,
+        targets.playerHeight,
+        ASSETS_CONFIG.player.walk.frames
+    );
 
-    const enemyKey = ASSETS_CONFIG.enemies.slime.idle.key;
-    const enemyTex = textures.get(enemyKey);
-    const enemyScale = computeScaleForTarget(enemyTex, targets.enemyHeight);
-    const enemySrc = enemyTex.getSourceImage();
+    const enemyMetrics = {};
+    Object.entries(ASSETS_CONFIG.enemies).forEach(([type, enemy]) => {
+        const key = enemy.walk?.key || enemy.idle?.key;
+        enemyMetrics[type] = buildSpriteMetrics(scene, key, enemy.height || targets.enemyHeight);
+    });
 
-    const projTex = textures.get(ASSETS_CONFIG.projectile.key);
-    const projScale = computeScaleForTarget(projTex, targets.projectileHeight);
-    const projSrc = projTex.getSourceImage();
+    const projMetrics = buildSpriteMetrics(scene, ASSETS_CONFIG.projectile.key, targets.projectileHeight);
+    const blockMetrics = buildSpriteMetrics(scene, ASSETS_CONFIG.breakableBlock.key, targets.breakableHeight);
+    const platformMetrics = buildSpriteMetrics(scene, ASSETS_CONFIG.tiles.key, targets.platformHeight);
+    const itemMetrics = buildSpriteMetrics(scene, ASSETS_CONFIG.items[0].key, targets.itemHeight);
 
-    const blockTex = textures.get(ASSETS_CONFIG.breakableBlock.key);
-    const blockScale = computeScaleForTarget(blockTex, targets.breakableHeight);
-    const blockSrc = blockTex.getSourceImage();
-
-    const platformTex = textures.get(ASSETS_CONFIG.tiles.key);
-    const platformScale = computeScaleForTarget(platformTex, targets.platformHeight);
-    const platformSrc = platformTex.getSourceImage();
-
-    const itemTex = textures.get(ASSETS_CONFIG.items[0].key);
-    const itemScale = computeScaleForTarget(itemTex, targets.itemHeight);
-    const itemSrc = itemTex.getSourceImage();
-
-    const iconScale = computeScaleForTarget(itemTex, targets.iconHeight);
+    const iconSourceKey = ASSETS_CONFIG.powerups.shield.iconKey || ASSETS_CONFIG.powerups.shield.key;
+    const iconTex = scene.textures.get(iconSourceKey) || scene.textures.get(ASSETS_CONFIG.items[0].key);
+    const iconScale = computeScaleForTarget(iconTex, targets.iconHeight);
 
     return {
         player: {
-            scale: playerScale,
-            src: { width: playerSrc.width, height: playerSrc.height },
-            walkFrameWidth,
-            walkFrameHeight
+            ...playerMetrics,
+            walk: walkMetrics
         },
-        enemy: {
-            scale: enemyScale,
-            src: { width: enemySrc.width, height: enemySrc.height }
-        },
-        projectile: {
-            scale: projScale,
-            src: { width: projSrc.width, height: projSrc.height }
-        },
-        block: {
-            scale: blockScale,
-            src: { width: blockSrc.width, height: blockSrc.height }
-        },
-        platform: {
-            scale: platformScale,
-            src: { width: platformSrc.width, height: platformSrc.height }
-        },
-        item: {
-            scale: itemScale,
-            src: { width: itemSrc.width, height: itemSrc.height }
-        },
+        enemies: enemyMetrics,
+        projectile: projMetrics,
+        block: blockMetrics,
+        platform: platformMetrics,
+        item: itemMetrics,
         iconScale
     };
 }
