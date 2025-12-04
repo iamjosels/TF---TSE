@@ -20,12 +20,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.setOrigin(0.5, 1);
         this.setScale(scale);
-        this.setCollideWorldBounds(true);
+        this.setCollideWorldBounds(false);
         this.setBounce(1, 0);
         const displayW = enemyMetrics.displayWidth || src.width * scale;
         const displayH = enemyMetrics.displayHeight || src.height * scale;
-        const bodyWidth = displayW * 0.68;
-        const bodyHeight = displayH * 0.78;
+        const bodyWidth = displayW * 0.62;
+        const bodyHeight = displayH * 0.74;
         this.body.setSize(bodyWidth, bodyHeight);
         this.body.setOffset((displayW - bodyWidth) / 2, displayH - bodyHeight);
 

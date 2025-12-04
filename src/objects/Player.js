@@ -37,6 +37,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.facing = 1;
         this.lastShot = 0;
+        this.shieldReboundUntil = 0;
         this.powerups = {
             [POWERUP_TYPES.TRIPLE_SHOT]: { active: false, timer: null },
             [POWERUP_TYPES.SHIELD]: { active: false },
@@ -62,6 +63,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.play('player-idle', true);
         this.facing = 1;
         this.setFlipX(false);
+        this.shieldReboundUntil = 0;
         this.clearPowerups();
     }
 
@@ -145,20 +147,37 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
-    consumeShield() {
-        if (this.powerups[POWERUP_TYPES.SHIELD].active) {
-            this.scene.playPowerupSound?.('shield-break');
-            this.powerups[POWERUP_TYPES.SHIELD].active = false;
+    consumeShield(source) {
+        if (!this.powerups[POWERUP_TYPES.SHIELD].active) return false;
+
+        this.scene.playPowerupSound?.('shield-break');
+        this.powerups[POWERUP_TYPES.SHIELD].active = false;
+
+        const knockDirection = source ? Math.sign(this.x - source.x) || 1 : -this.facing;
+        const knockbackX = 400 * knockDirection;
+        const knockbackY = -400;
+        if (this.body) {
+            this.setVelocity(knockbackX, knockbackY);
+        }
+        this.shieldReboundUntil = this.scene.time.now + 320;
+
+        const aura = this.shieldAura;
+        if (aura) {
             this.scene.tweens.add({
-                targets: this.shieldAura,
+                targets: aura,
                 scale: { from: 1.1, to: 1.5 },
                 alpha: { from: 0.9, to: 0 },
                 duration: 260,
                 onComplete: () => this.disableShieldAura()
             });
-            return true;
+        } else {
+            this.disableShieldAura();
         }
-        return false;
+        return true;
+    }
+
+    isShieldRebounding() {
+        return this.shieldReboundUntil > this.scene.time.now;
     }
 
     update(time, projectiles) {

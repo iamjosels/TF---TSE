@@ -192,6 +192,7 @@ export class CavernBase extends Phaser.Scene {
 
     handlePlayerEnemyCollision = (player, enemy) => {
         if (!this.respawning && this.player.active) {
+            if (this.player.isShieldRebounding && this.player.isShieldRebounding()) return;
             const shielded = this.player.consumeShield(enemy);
             if (shielded) {
                 this.hud.clearPowerup(POWERUP_TYPES.SHIELD);
