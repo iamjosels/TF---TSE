@@ -1,8 +1,8 @@
 export const ASSETS_CONFIG = {
-    background: { key: 'bg-cave', path: 'assets/New Assets/bg.png' },
+    background: { key: 'bg-cave', path: 'assets/super_pixel_cave/style_A/PNG/bg1.png' },
     tiles: {
         key: 'tiles-platform',
-        path: 'assets/New Assets/platform.png'
+        path: 'assets/super_pixel_cave/style_A/PNG/terrain_platform_center.png'
     },
     player: {
         origin: { x: 0.5, y: 1 },
@@ -12,12 +12,27 @@ export const ASSETS_CONFIG = {
         walk: { key: 'player-walk', path: 'assets/New Assets/p_walkcycle.png', frames: 2 }
     },
     enemies: {
-        slime: {
-            walkFrames: [
-                { key: 'slime-walk-1', path: 'assets/New Assets/g_walk1.png' },
-                { key: 'slime-walk-2', path: 'assets/New Assets/g_walk2.png' }
-            ],
-            dead: { key: 'slime-dead', path: 'assets/New Assets/g_dead.png' }
+        goblin: {
+            spritesheet: {
+                key: 'goblin-sheet',
+                path: 'assets/goblin scout/goblin scout - silhouette all animations-walk.png',
+                jsonPath: 'assets/goblin scout/goblin scout - silhouette all animations-walk.json'
+            },
+            idle: {
+                key: 'goblin-idle-sheet',
+                path: 'assets/goblin scout/goblin scout - silhouette all animations-idle.png',
+                jsonPath: 'assets/goblin scout/goblin scout - silhouette all animations-idle.json'
+            },
+            dead: {
+                key: 'goblin-dead-sheet',
+                path: 'assets/goblin scout/goblin scout - silhouette all animations-death 1.png',
+                jsonPath: 'assets/goblin scout/goblin scout - silhouette all animations-death 1.json'
+            },
+            hit: {
+                key: 'goblin-hit-sheet',
+                path: 'assets/goblin scout/goblin scout - silhouette all animations-hit.png',
+                jsonPath: 'assets/goblin scout/goblin scout - silhouette all animations-hit.json'
+            }
         }
     },
     breakableBlock: {
@@ -30,27 +45,27 @@ export const ASSETS_CONFIG = {
         bounce: 0.82
     },
     items: [
-        { key: 'coin', path: 'assets/New Assets/coin.png', score: 25 },
-        { key: 'gem-heart', path: 'assets/New Assets/gemheart.png', score: 125 }
+        { key: 'coin', path: 'assets/MegasFoodPack-v1/cookie.png', score: 25 },
+        { key: 'gem-heart', path: 'assets/MegasFoodPack-v1/red-apple.png', score: 125 }
     ],
     powerups: {
         tripleShot: {
             key: 'powerup-triple',
-            path: 'assets/New Assets/coin.png',
+            path: 'assets/MegasFoodPack-v1/orange.png',
             iconKey: 'icon-triple',
             duration: 10000,
             popup: 'TRIPLE SHOT!'
         },
         shield: {
             key: 'powerup-shield',
-            path: 'assets/New Assets/gemheart.png',
+            path: 'assets/MegasFoodPack-v1/cooked-chicken-leg.png',
             iconKey: 'icon-shield',
             duration: 0,
             popup: 'SHIELD!'
         },
         freezeZone: {
             key: 'powerup-freeze',
-            path: 'assets/New Assets/projectile.png',
+            path: 'assets/MegasFoodPack-v1/corn.png',
             iconKey: 'icon-freeze',
             duration: 7000,
             popup: 'FREEZE ZONE!'
@@ -71,11 +86,11 @@ export const ASSETS_CONFIG = {
     },
     targets: {
         playerHeight: 46,
-        enemyHeight: 42,
+        enemyHeight: 48,
         projectileHeight: 18,
         breakableHeight: 52,
-        platformHeight: 48,
-        itemHeight: 28,
+        platformHeight: 16,
+        itemHeight: 32,
         iconHeight: 28
     }
 };

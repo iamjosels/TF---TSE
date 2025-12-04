@@ -47,25 +47,41 @@ export function createAnimations(scene, metrics = {}) {
         });
     }
 
-    const slime = ASSETS_CONFIG.enemies.slime;
-    ensureAnim('slime-walk', {
-        key: 'slime-walk',
-        frames: slime.walkFrames.map((frame) => ({ key: frame.key })),
-        frameRate: 6,
-        repeat: -1
-    });
+    const goblin = ASSETS_CONFIG.enemies.goblin;
+    
+    if (scene.textures.exists(goblin.spritesheet.key)) {
+        ensureAnim('goblin-walk', {
+            key: 'goblin-walk',
+            frames: anims.generateFrameNames(goblin.spritesheet.key),
+            frameRate: 8,
+            repeat: -1
+        });
+    }
 
-    ensureAnim('slime-idle', {
-        key: 'slime-idle',
-        frames: [{ key: slime.walkFrames[0].key }],
-        frameRate: 1,
-        repeat: -1
-    });
+    if (scene.textures.exists(goblin.idle.key)) {
+        ensureAnim('goblin-idle', {
+            key: 'goblin-idle',
+            frames: anims.generateFrameNames(goblin.idle.key),
+            frameRate: 6,
+            repeat: -1
+        });
+    }
 
-    ensureAnim('slime-dead', {
-        key: 'slime-dead',
-        frames: [{ key: slime.dead.key }],
-        frameRate: 1,
-        repeat: 0
-    });
+    if (scene.textures.exists(goblin.dead.key)) {
+        ensureAnim('goblin-dead', {
+            key: 'goblin-dead',
+            frames: anims.generateFrameNames(goblin.dead.key),
+            frameRate: 10,
+            repeat: 0
+        });
+    }
+
+    if (scene.textures.exists(goblin.hit.key)) {
+        ensureAnim('goblin-hit', {
+            key: 'goblin-hit',
+            frames: anims.generateFrameNames(goblin.hit.key),
+            frameRate: 12,
+            repeat: 0
+        });
+    }
 }

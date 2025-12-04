@@ -6,7 +6,7 @@ const ENEMY_CONSTANTS = {
 
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, patrolRange = { left: x - 120, right: x + 120 }, speed = ENEMY_CONSTANTS.SPEED) {
-        super(scene, x, y, ASSETS_CONFIG.enemies.slime.walkFrames[0].key);
+        super(scene, x, y, ASSETS_CONFIG.enemies.goblin.spritesheet.key);
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -18,11 +18,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setScale(scale);
         this.setCollideWorldBounds(true);
         this.setBounce(1, 0);
-        const src = scene.textures.get(this.texture.key).getSourceImage();
-        const bodyWidth = src.width * 0.7;
-        const bodyHeight = src.height * 0.9;
+        const bodyWidth = 40;
+        const bodyHeight = 50;
         this.body.setSize(bodyWidth, bodyHeight);
-        this.body.setOffset((src.width - bodyWidth) / 2, src.height - bodyHeight);
+        this.body.setOffset((64 - bodyWidth) / 2, 64 - bodyHeight);
 
         this.direction = -1;
         this.patrolLeft = patrolRange.left;
@@ -31,7 +30,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.frozen = false;
         this.freezeTimer = null;
 
-        this.play('slime-walk');
+        this.play('goblin-walk');
     }
 
     update() {
@@ -50,8 +49,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(this.direction * this.speed);
         this.setFlipX(this.direction > 0);
 
-        if (!this.anims.isPlaying || this.anims.currentAnim.key !== 'slime-walk') {
-            this.play('slime-walk', true);
+        if (!this.anims.isPlaying || this.anims.currentAnim.key !== 'goblin-walk') {
+            this.play('goblin-walk', true);
         }
     }
 
@@ -67,7 +66,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.freezeTimer = null;
         }
         this.setVelocity(0, 0);
-        this.play('slime-dead');
+        this.play('goblin-dead');
         this.scene.time.delayedCall(120, () => this.disableBody(true, true));
     }
 
