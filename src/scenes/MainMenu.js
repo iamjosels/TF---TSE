@@ -9,40 +9,49 @@ export class MainMenu extends Phaser.Scene {
         // Reset shared game state whenever we land on the menu.
         resetGameState(this);
 
-        this.cameras.main.setBackgroundColor('#040218');
+        const bg = this.add.image(0, 0, 'menu-bg').setOrigin(0, 0);
+        bg.setDisplaySize(this.scale.width, this.scale.height);
 
-        this.add.text(640, 140, 'Cavernas', {
-            fontSize: '52px',
-            color: '#ffffff'
-        }).setOrigin(0.5);
+        this.playMenuMusic();
 
-        this.add.text(640, 210, 'Kenney art, HammerFest mechanics', {
-            fontSize: '22px',
-            color: '#bbbbff'
-        }).setOrigin(0.5);
+        // Áreas clickeables invisibles (mantienen padding y posición)
+        const playArea = this.add.rectangle(610, 300, 340, 80, 0xffffff, 0.001)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+        this.add.text(610, 300, 'JUGAR', {
+            fontSize: '36px',
+            color: '#ffffff',
+            padding: { x: 170, y: 20 }
+        }).setOrigin(0.5).setAlpha(0);
 
-        const playText = this.add.text(640, 320, 'Play', {
-            fontSize: '32px',
-            color: '#ffe28a',
-            backgroundColor: '#222'
-        }).setOrigin(0.5).setPadding(10, 6, 10, 6).setInteractive({ useHandCursor: true });
+        const instrArea = this.add.rectangle(610, 415, 260, 80, 0xffffff, 0.001)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+        this.add.text(610, 415, 'INSTRUCCIONES', {
+            fontSize: '28px',
+            color: '#ffffff',
+            padding: { x: 115, y: 24 }
+        }).setOrigin(0.5).setAlpha(0);
 
-        this.add.text(640, 390, 'Move: WASD / Arrows  |  Jump: W / UP  |  Throw hammer: SPACE / J', {
-            fontSize: '18px',
-            color: '#dddddd'
-        }).setOrigin(0.5);
+        playArea.on('pointerdown', () => this.startGame());
+        instrArea.on('pointerdown', () => this.scene.start('Instructions'));
+        this.input.keyboard.once('keydown-SPACE', () => this.startGame());
+    }
 
-        this.add.text(640, 430, 'Powerups drop from foes & blocks: Triple Shot, Shield, Freeze Zone', {
-            fontSize: '17px',
-            color: '#aee6ff'
-        }).setOrigin(0.5);
+    playMenuMusic() {
+        const existing = this.sound.get('music-menu');
+        if (existing) {
+            if (!existing.isPlaying) existing.play({ loop: true, volume: 0.5 });
+            return;
+        }
+        const music = this.sound.add('music-menu', { loop: true, volume: 0.5 });
+        music.play();
+    }
 
-        this.add.text(640, 470, 'Descend to the bottom exit to clear each cavern. Hammer everything!', {
-            fontSize: '16px',
-            color: '#aaaaaa'
-        }).setOrigin(0.5);
-
-        playText.on('pointerdown', () => this.scene.start('Level1'));
-        this.input.keyboard.once('keydown-SPACE', () => this.scene.start('Level1'));
+    startGame() {
+        this.sound.stopByKey('music-menu');
+        const gameMusic = this.sound.get('music-game') || this.sound.add('music-game', { loop: true, volume: 0.6 });
+        if (!gameMusic.isPlaying) gameMusic.play();
+        this.scene.start('Level1');
     }
 }

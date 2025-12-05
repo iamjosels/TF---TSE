@@ -27,6 +27,7 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
         const scale = src?.height ? targetH / src.height : 1.4;
         this.setScale(scale);
         this.play('boss-move');
+        this.spawn = { x, y };
 
         const fireDelay = cfg.fireInterval || BOSS_CONSTANTS.FIRE_INTERVAL;
         this.fireTimer = scene.time.addEvent({
@@ -46,6 +47,9 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
     update() {
         if (this.healthText && this.healthText.active) {
             this.healthText.setPosition(this.x, this.y - this.displayHeight - 8);
+        }
+        if (this.y > this.scene.physics.world.bounds.height + 60) {
+            this.resetToSpawn();
         }
     }
 
@@ -173,6 +177,17 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
             this.setTint(0xff4444);
             this.play('boss-idle');
             this.startFloating();
+        }
+    }
+
+    resetToSpawn() {
+        this.setPosition(this.spawn?.x || this.x, this.spawn?.y || this.y);
+        this.setVelocity(0, 0);
+        this.frozen = false;
+        this.clearTint();
+        this.play(this.lowHealth ? 'boss-idle' : 'boss-move');
+        if (this.healthText) {
+            this.healthText.setPosition(this.x, this.y - this.displayHeight - 8);
         }
     }
 }

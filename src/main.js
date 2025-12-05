@@ -5,6 +5,7 @@ import { Level1 } from './scenes/Level1.js';
 import { Level2 } from './scenes/Level2.js';
 import { Level3 } from './scenes/Level3.js';
 import { Win } from './scenes/Win.js';
+import { Instructions } from './scenes/Instructions.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -14,7 +15,7 @@ const config = {
     height: 720,
     backgroundColor: '#000000',
     pixelArt: true,
-    scene: [Boot, Preload, MainMenu, Level1, Level2, Level3, Win],
+    scene: [Boot, Preload, MainMenu, Instructions, Level1, Level2, Level3, Win],
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH

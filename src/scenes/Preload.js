@@ -117,6 +117,8 @@ export class Preload extends Phaser.Scene {
         }).setOrigin(0.5);
 
         this.load.image(ASSETS_CONFIG.background.key, ASSETS_CONFIG.background.path);
+        this.load.image('menu-bg', 'assets/MainMenu.png');
+        this.load.image('instructions-bg', 'assets/Instrucciones.png');
         this.load.image(ASSETS_CONFIG.tiles.key, ASSETS_CONFIG.tiles.path);
 
         const player = ASSETS_CONFIG.player;
@@ -154,6 +156,10 @@ export class Preload extends Phaser.Scene {
             frameWidth: ASSETS_CONFIG.bossReaper.run.frameWidth,
             frameHeight: ASSETS_CONFIG.bossReaper.run.frameHeight
         });
+
+        // Audio
+        this.load.audio('music-menu', 'assets/musica/Prehistorik 2 - Monster.mp3');
+        this.load.audio('music-game', 'assets/musica/Soul Knight Prequel OST _ Dungeon 04.mp3');
         ASSETS_CONFIG.items.forEach((item) => this.load.image(item.key, item.path));
 
         Object.values(ASSETS_CONFIG.powerups).forEach((powerup) => {
