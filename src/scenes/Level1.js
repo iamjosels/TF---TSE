@@ -8,6 +8,8 @@ const LEVEL1_LAYOUT = {
     exitY: 700,
     hazardY: 760,
     exitLabel: 'Exit v',
+    boss: { x: 1100, y: 420 },
+    aidDropInterval: 10000,
     platforms: [
         // Floor
         { x: 160, y: 680, scaleX: 2.3 },
@@ -20,7 +22,7 @@ const LEVEL1_LAYOUT = {
         { x: 1060, y: 560, scaleX: 2.4 },
         { x: 640, y: 520, scaleX: 3.0 },
         { x: 360, y: 430, scaleX: 2.2 },
-        { x: 920, y: 430, scaleX: 2.2 },
+        { x: 920, y: 430, scaleX: 2.2},
         { x: 640, y: 350, scaleX: 2.1 },
         { x: 320, y: 260, scaleX: 1.8 },
         { x: 960, y: 260, scaleX: 1.8 },
@@ -39,7 +41,7 @@ const LEVEL1_LAYOUT = {
     enemies: [
         { x: 1040, y: 540, patrol: { left: 880, right: 1180 }, type: 'slime', speed: 90 },
         { x: 240, y: 540, patrol: { left: 120, right: 420 }, type: 'slimeBlue', speed: 60 },
-        { x: 640, y: 320, patrol: { left: 520, right: 780 }, type: 'spider', speed: 130 }
+        { x: 800, y: 320, patrol: { left: 520, right: 780 }, type: 'spider', speed: 130 }
     ]
 };
 

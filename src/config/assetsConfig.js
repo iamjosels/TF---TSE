@@ -41,6 +41,13 @@ export const ASSETS_CONFIG = {
         key: 'breakable-block',
         path: 'assets/Base pack/Tiles/box.png'
     },
+    boss: {
+        idle: { key: 'boss-idle', path: 'assets/Extra animations and enemies/Enemy sprites/ghost.png' },
+        move: { key: 'boss-move', path: 'assets/Extra animations and enemies/Enemy sprites/ghost_normal.png' },
+        hit: { key: 'boss-hit', path: 'assets/Extra animations and enemies/Enemy sprites/ghost_hit.png' },
+        dead: { key: 'boss-dead', path: 'assets/Extra animations and enemies/Enemy sprites/ghost_dead.png' },
+        targetHeight: 70
+    },
     projectile: {
         key: 'projectile-hammer',
         path: 'assets/New Assets/projectile.png',

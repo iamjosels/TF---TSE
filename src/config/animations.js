@@ -121,4 +121,39 @@ export function createAnimations(scene, metrics = {}) {
             repeat: 0
         });
     }
+
+    // Boss animations (static frames)
+    const boss = ASSETS_CONFIG.boss;
+    if (scene.textures.exists(boss.idle.key)) {
+        ensureAnim('boss-idle', {
+            key: 'boss-idle',
+            frames: [{ key: boss.idle.key }],
+            frameRate: 1,
+            repeat: -1
+        });
+    }
+    if (scene.textures.exists(boss.hit.key)) {
+        ensureAnim('boss-hit', {
+            key: 'boss-hit',
+            frames: [{ key: boss.hit.key }],
+            frameRate: 4,
+            repeat: 0
+        });
+    }
+    if (scene.textures.exists(boss.move.key)) {
+        ensureAnim('boss-move', {
+            key: 'boss-move',
+            frames: [{ key: boss.move.key }],
+            frameRate: 6,
+            repeat: -1
+        });
+    }
+    if (scene.textures.exists(boss.dead.key)) {
+        ensureAnim('boss-dead', {
+            key: 'boss-dead',
+            frames: [{ key: boss.dead.key }],
+            frameRate: 1,
+            repeat: 0
+        });
+    }
 }
