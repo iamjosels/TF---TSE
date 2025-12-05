@@ -22,6 +22,9 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
         this.firing = true;
         this.lowHealth = false;
         this.frozen = false;
+        this.moveSpeed = cfg.moveSpeed || BOSS_CONSTANTS.MOVE_SPEED;
+        this.projectileSpeed = cfg.projectileSpeed || BOSS_CONSTANTS.PROJECTILE_SPEED;
+        this.fireInterval = cfg.fireInterval || BOSS_CONSTANTS.FIRE_INTERVAL;
         const targetH = ASSETS_CONFIG.boss.targetHeight || 70;
         const src = scene.textures.get(this.texture.key).getSourceImage();
         const scale = src?.height ? targetH / src.height : 1.4;
@@ -29,9 +32,8 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
         this.play('boss-move');
         this.spawn = { x, y };
 
-        const fireDelay = cfg.fireInterval || BOSS_CONSTANTS.FIRE_INTERVAL;
         this.fireTimer = scene.time.addEvent({
-            delay: fireDelay,
+            delay: this.fireInterval,
             loop: true,
             callback: () => this.fireAtPlayer()
         });
@@ -68,7 +70,9 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
             if (!this.active || this.frozen) return;
             const next = points[idx % points.length];
             const dist = Phaser.Math.Distance.Between(this.x, this.y, next.x, next.y);
-            const speed = this.lowHealth ? BOSS_CONSTANTS.MOVE_SPEED * BOSS_CONSTANTS.ENRAGED_SPEED_MULT : BOSS_CONSTANTS.MOVE_SPEED;
+            const speed = this.lowHealth
+                ? this.moveSpeed * BOSS_CONSTANTS.ENRAGED_SPEED_MULT
+                : this.moveSpeed;
             const duration = (dist / speed) * 1000;
             this.scene.tweens.add({
                 targets: this,
@@ -96,7 +100,7 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
         proj.setCollideWorldBounds(false);
         proj.body.onWorldBounds = false;
         const dir = new Phaser.Math.Vector2(target.x - this.x, target.y - this.y - 10).normalize();
-        proj.setVelocity(dir.x * BOSS_CONSTANTS.PROJECTILE_SPEED, dir.y * BOSS_CONSTANTS.PROJECTILE_SPEED);
+        proj.setVelocity(dir.x * this.projectileSpeed, dir.y * this.projectileSpeed);
         proj.setScale(1.1);
         this.scene.time.delayedCall(3500, () => {
             if (proj.active) {

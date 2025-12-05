@@ -147,10 +147,13 @@ export class BossReaper extends Phaser.Physics.Arcade.Sprite {
     }
 
     destroyBoss() {
+        if (!this.active) return;
         if (this.fireTimer) this.fireTimer.remove(false);
         if (this.dashTimer) this.dashTimer.remove(false);
         if (this.jumpTimer) this.jumpTimer.remove(false);
-        this.play('reaper-dead');
+        if (this.anims) {
+            this.play('reaper-dead');
+        }
         this.scene.tweens.add({
             targets: this,
             alpha: 0,

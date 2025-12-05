@@ -341,6 +341,10 @@ export class CavernBase extends Phaser.Scene {
             }
             return;
         }
+        if (typeof this.advanceRound === 'function') {
+            this.advanceRound();
+            return;
+        }
         this.levelFinished = true;
         const message = this.levelSettings.exitMessage || 'Descending...';
         this.hud.showPopup(message, this.player.x, this.player.y - 40, '#ffe28a');
@@ -548,6 +552,10 @@ export class CavernBase extends Phaser.Scene {
             }
         });
         this.levelFinished = true;
+        if (typeof this.advanceRound === 'function') {
+            this.advanceRound();
+            return;
+        }
         this.time.delayedCall(300, () => this.scene.start(this.levelSettings.nextScene || 'MainMenu'));
     }
 }

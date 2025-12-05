@@ -1,9 +1,10 @@
 export const GAME_DEFAULTS = {
     LIVES: 3,
     SCORE: 0,
-    EXTRA_LIFE_THRESHOLD: 200,
+    EXTRA_LIFE_THRESHOLD: 500,
     COMBO_TIMEOUT: 3000,
-    COMBO_MULTIPLIERS: [1, 2, 3, 4, 5]
+    COMBO_MULTIPLIERS: [1, 2, 3, 4, 5],
+    ENDLESS_RECORD: 0
 };
 
 export function ensureState(scene) {
@@ -21,6 +22,9 @@ export function ensureState(scene) {
     }
     if (scene.registry.get('comboTimer') === undefined) {
         scene.registry.set('comboTimer', null);
+    }
+    if (scene.registry.get('endlessRecord') === undefined) {
+        scene.registry.set('endlessRecord', GAME_DEFAULTS.ENDLESS_RECORD);
     }
 }
 
