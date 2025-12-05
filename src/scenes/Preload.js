@@ -138,6 +138,22 @@ export class Preload extends Phaser.Scene {
         this.load.image(ASSETS_CONFIG.boss.move.key, ASSETS_CONFIG.boss.move.path);
         this.load.image(ASSETS_CONFIG.boss.hit.key, ASSETS_CONFIG.boss.hit.path);
         this.load.image(ASSETS_CONFIG.boss.dead.key, ASSETS_CONFIG.boss.dead.path);
+        this.load.spritesheet(ASSETS_CONFIG.bossReaper.run.key, ASSETS_CONFIG.bossReaper.run.path, {
+            frameWidth: ASSETS_CONFIG.bossReaper.run.frameWidth,
+            frameHeight: ASSETS_CONFIG.bossReaper.run.frameHeight
+        });
+        this.load.spritesheet(ASSETS_CONFIG.bossReaper.idle.key, ASSETS_CONFIG.bossReaper.idle.path, {
+            frameWidth: ASSETS_CONFIG.bossReaper.idle.frameWidth,
+            frameHeight: ASSETS_CONFIG.bossReaper.idle.frameHeight
+        });
+        this.load.spritesheet(ASSETS_CONFIG.bossReaper.hit.key, ASSETS_CONFIG.bossReaper.hit.path, {
+            frameWidth: ASSETS_CONFIG.bossReaper.run.frameWidth,
+            frameHeight: ASSETS_CONFIG.bossReaper.run.frameHeight
+        });
+        this.load.spritesheet(ASSETS_CONFIG.bossReaper.dead.key, ASSETS_CONFIG.bossReaper.dead.path, {
+            frameWidth: ASSETS_CONFIG.bossReaper.run.frameWidth,
+            frameHeight: ASSETS_CONFIG.bossReaper.run.frameHeight
+        });
         ASSETS_CONFIG.items.forEach((item) => this.load.image(item.key, item.path));
 
         Object.values(ASSETS_CONFIG.powerups).forEach((powerup) => {

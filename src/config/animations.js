@@ -156,4 +156,42 @@ export function createAnimations(scene, metrics = {}) {
             repeat: 0
         });
     }
+
+    // Reaper boss animations
+    const reaper = ASSETS_CONFIG.bossReaper;
+    if (scene.textures.exists(reaper.run.key)) {
+        const frames = anims.generateFrameNumbers(reaper.run.key, { start: 0, end: (reaper.run.frames || 8) - 1 });
+        ensureAnim('reaper-run', {
+            key: 'reaper-run',
+            frames,
+            frameRate: 10,
+            repeat: -1
+        });
+    }
+    if (scene.textures.exists(reaper.idle.key)) {
+        const frames = anims.generateFrameNumbers(reaper.idle.key, { start: 0, end: (reaper.idle.frames || 8) - 1 });
+        ensureAnim('reaper-idle', {
+            key: 'reaper-idle',
+            frames,
+            frameRate: 6,
+            repeat: -1
+        });
+    }
+    if (scene.textures.exists(reaper.hit.key)) {
+        ensureAnim('reaper-hit', {
+            key: 'reaper-hit',
+            frames: anims.generateFrameNumbers(reaper.hit.key, {}),
+            frameRate: 8,
+            repeat: 0
+        });
+    }
+    if (scene.textures.exists(reaper.dead.key)) {
+        ensureAnim('reaper-dead', {
+            key: 'reaper-dead',
+            frames: anims.generateFrameNumbers(reaper.dead.key, {}),
+            frameRate: 6,
+            repeat: 0
+        });
+    }
+
 }

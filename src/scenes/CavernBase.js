@@ -4,6 +4,7 @@ import { LOOT_ODDS, POWERUP_TYPES } from '../config/powerupsConfig.js';
 import { Player } from '../objects/Player.js';
 import { Enemy } from '../objects/Enemy.js';
 import { BossTurret } from '../objects/BossTurret.js';
+import { BossReaper } from '../objects/BossReaper.js';
 import { Projectile } from '../objects/Projectile.js';
 import { BreakableBlock } from '../objects/BreakableBlock.js';
 import { Item } from '../objects/Item.js';
@@ -21,8 +22,9 @@ export class CavernBase extends Phaser.Scene {
         this.levelSettings = levelSettings;
         this.levelFinished = false;
         this.respawning = false;
-        this.boss = null;
+        this.bosses = [];
         this.fallingPlatformData = [];
+        this.debugEndKey = null;
     }
 
     create() {
@@ -53,6 +55,7 @@ export class CavernBase extends Phaser.Scene {
         this.hud = new HUD(this, this.levelSettings.title || '');
         this.hud.setScore(this.score);
         this.hud.setLives(this.lives);
+        this.debugEndKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P);
 
         this.registerCollisions();
         this.createExitZone();
@@ -145,11 +148,20 @@ export class CavernBase extends Phaser.Scene {
 
     createBoss(bossConfig) {
         if (!bossConfig) return;
-        const boss = new BossTurret(this, bossConfig.x, bossConfig.y);
-        boss.body.setAllowGravity(false);
-        boss.body.setImmovable(true);
-        this.enemies.add(boss);
-        this.boss = boss;
+        const configs = Array.isArray(bossConfig) ? bossConfig : [bossConfig];
+        configs.forEach((cfg) => {
+            if (!cfg) return;
+            let boss = null;
+            if (cfg.kind === 'reaper') {
+                boss = new BossReaper(this, cfg.x, cfg.y, cfg);
+            } else {
+                boss = new BossTurret(this, cfg.x, cfg.y, cfg);
+                boss.body.setAllowGravity(false);
+                boss.body.setImmovable(true);
+            }
+            this.enemies.add(boss);
+            this.bosses.push(boss);
+        });
     }
 
     createExitZone() {
@@ -308,7 +320,8 @@ export class CavernBase extends Phaser.Scene {
 
     handleExit = () => {
         if (this.levelFinished) return;
-        if (this.boss && this.boss.active) {
+        const aliveBoss = this.bosses?.some((b) => b.active);
+        if (aliveBoss) {
             // Punish trying to skip the boss
             if (!this.respawning) {
                 const lives = loseLife(this);
@@ -518,5 +531,23 @@ export class CavernBase extends Phaser.Scene {
         if (this.player.active && this.player.y > hazardY) {
             this.handlePlayerDeath();
         }
+
+        if (this.debugEndKey && Phaser.Input.Keyboard.JustDown(this.debugEndKey)) {
+            this.skipLevelCheat();
+        }
+    }
+
+    skipLevelCheat() {
+        // Cheat: kill all bosses and advance
+        this.bosses.forEach((b) => {
+            if (b?.destroyBoss) {
+                b.health = 0;
+                b.destroyBoss();
+            } else if (b?.disableBody) {
+                b.disableBody(true, true);
+            }
+        });
+        this.levelFinished = true;
+        this.time.delayedCall(300, () => this.scene.start(this.levelSettings.nextScene || 'MainMenu'));
     }
 }

@@ -10,7 +10,7 @@ const BOSS_CONSTANTS = {
 };
 
 export class BossTurret extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y) {
+    constructor(scene, x, y, cfg = {}) {
         super(scene, x, y, ASSETS_CONFIG.boss.idle.key);
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -18,7 +18,7 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
         this.setOrigin(0.5, 1);
         this.setImmovable(true);
         this.body.setAllowGravity(false);
-        this.health = BOSS_CONSTANTS.HEALTH;
+        this.health = cfg.health || BOSS_CONSTANTS.HEALTH;
         this.firing = true;
         this.lowHealth = false;
         this.frozen = false;
@@ -28,8 +28,9 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
         this.setScale(scale);
         this.play('boss-move');
 
+        const fireDelay = cfg.fireInterval || BOSS_CONSTANTS.FIRE_INTERVAL;
         this.fireTimer = scene.time.addEvent({
-            delay: BOSS_CONSTANTS.FIRE_INTERVAL,
+            delay: fireDelay,
             loop: true,
             callback: () => this.fireAtPlayer()
         });
@@ -143,12 +144,15 @@ export class BossTurret extends Phaser.Physics.Arcade.Sprite {
     }
 
     destroyBoss() {
+        if (!this.active) return;
         this.firing = false;
         if (this.fireTimer) {
             this.fireTimer.remove(false);
             this.fireTimer = null;
         }
-        this.play('boss-dead');
+        if (this.anims) {
+            this.play('boss-dead');
+        }
         this.scene.playBossSound?.('death');
         this.scene.tweens.add({
             targets: [this, this.healthText],

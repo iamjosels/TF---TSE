@@ -8,6 +8,11 @@ const LEVEL2_LAYOUT = {
     exitY: 700,
     hazardY: 760,
     exitLabel: 'Exit to Cavern 3 v',
+    boss: [
+        { kind: 'ghost', x: 1040, y: 460 },
+        { kind: 'reaper', x: 220, y: 500 }
+    ],
+    aidDropInterval: 8500,
     platforms: [
         { x: 160, y: 680, scaleX: 2.3 },
         { x: 400, y: 680, scaleX: 2.3 },

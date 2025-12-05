@@ -9,6 +9,17 @@ const LEVEL3_LAYOUT = {
     hazardY: 760,
     exitLabel: 'Surface exit v',
     exitMessage: 'Caverns cleared!',
+    boss: [
+        { kind: 'ghost', x: 1040, y: 460, health: 24, fireInterval: 700 },
+        { kind: 'reaper', x: 280, y: 520, health: 24, moveSpeed: 240, dashSpeed: 420 }
+    ],
+    aidDropInterval: 9000,
+    boss: [
+        { kind: 'ghost', x: 1040, y: 460 },
+        { kind: 'reaper', x: 280, y: 520 },
+        { kind: 'fly', x: 640, y: 360 }
+    ],
+    aidDropInterval: 9000,
     platforms: [
         { x: 160, y: 680, scaleX: 2.1 },
         { x: 400, y: 680, scaleX: 2.1 },

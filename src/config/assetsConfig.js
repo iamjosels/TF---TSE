@@ -48,6 +48,13 @@ export const ASSETS_CONFIG = {
         dead: { key: 'boss-dead', path: 'assets/Extra animations and enemies/Enemy sprites/ghost_dead.png' },
         targetHeight: 70
     },
+    bossReaper: {
+        run: { key: 'reaper-run', path: 'assets/goblin scout/goblin scout - silhouette all animations-run.png', frameWidth: 64, frameHeight: 64, frames: 8 },
+        idle: { key: 'reaper-idle', path: 'assets/goblin scout/goblin scout - silhouette all animations-idle.png', frameWidth: 64, frameHeight: 64, frames: 8 },
+        hit: { key: 'reaper-hit', path: 'assets/goblin scout/goblin scout - silhouette all animations-hit.png' },
+        dead: { key: 'reaper-dead', path: 'assets/goblin scout/goblin scout - silhouette all animations-death 1.png' },
+        targetHeight: 110
+    },
     projectile: {
         key: 'projectile-hammer',
         path: 'assets/New Assets/projectile.png',
